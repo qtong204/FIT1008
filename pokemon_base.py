@@ -1,9 +1,10 @@
-"""
+f"""
 This module contains PokeType, TypeEffectiveness and an abstract version of the Pokemon Class
 """
 from abc import ABC
 from enum import Enum
 from data_structures.referential_array import ArrayR
+import pandas as pd
 
 class BattleMode(Enum):
     SET = 0
@@ -34,6 +35,7 @@ class TypeEffectiveness:
     """
     Represents the type effectiveness of one Pokemon type against another.
     """
+    EFFECT_TABLE = pd.read_csv('type_effectiveness.csv')
 
     @classmethod
     def get_effectiveness(cls, attack_type: PokeType, defend_type: PokeType) -> float:
@@ -47,7 +49,10 @@ class TypeEffectiveness:
         Returns:
             float: The effectiveness of the attack, as a float value between 0 and 4.
         """
-        raise NotImplementedError
+
+        return cls.EFFECT_TABLE.iloc[attack_type.value, defend_type.value]
+        # I make use of the iloc function that I learn in FIT1043, it returns to the value with row * col
+        # How ever I realised that the row is the defender and the column is the attacker
 
     def __len__(self) -> int:
         """
@@ -212,3 +217,6 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
         """
         return f"{self.name} (Level {self.level}) with {self.get_health()} health \
                 and {self.get_experience()} experience"
+    
+# ty = TypeEffectiveness()
+# print(ty.get_effectiveness(PokeType.WATER, PokeType.GRASS))
