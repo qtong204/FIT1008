@@ -3,6 +3,7 @@ import inspect
 
 class Bulbasaur(Pokemon):
     def __init__(self):
+        super().__init__()
         self.health = 45
         self.level = 1
         self.poketype = PokeType.GRASS
@@ -781,8 +782,8 @@ class Jynx(Pokemon):
         self.speed = 95
 
 class Electabuzz(Pokemon):
-    def init(self):
-        super().init()
+    def __init__(self):
+        super().__init__()
         self.health = 65
         self.level = 1
         self.poketype = PokeType.ELECTRIC
@@ -1004,9 +1005,9 @@ class Dratini(Pokemon):
 def get_all_pokemon_types():
     all_pokemon = ArrayR(77)
     i = 0
-    for name, obj in inspect.getmembers(inspect.getmodule(inspect.currentframe()), inspect.isclass):
+    for name, cls in inspect.getmembers(inspect.getmodule(inspect.currentframe()), inspect.isclass):
         if name not in ['ABC', 'PokeType', 'Pokemon', 'TypeEffectiveness', 'Enum', 'ArrayR']:
-            all_pokemon[i] = obj
+            all_pokemon[i] = cls
             i += 1
     return all_pokemon
 

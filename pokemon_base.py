@@ -4,7 +4,8 @@ This module contains PokeType, TypeEffectiveness and an abstract version of the 
 from abc import ABC
 from enum import Enum
 from data_structures.referential_array import ArrayR
-import pandas as pd
+
+
 
 class BattleMode(Enum):
     SET = 0
@@ -35,7 +36,6 @@ class TypeEffectiveness:
     """
     Represents the type effectiveness of one Pokemon type against another.
     """
-    EFFECT_TABLE = pd.read_csv('type_effectiveness.csv')
 
     @classmethod
     def get_effectiveness(cls, attack_type: PokeType, defend_type: PokeType) -> float:
@@ -49,10 +49,21 @@ class TypeEffectiveness:
         Returns:
             float: The effectiveness of the attack, as a float value between 0 and 4.
         """
+        effectiveness_chart = ArrayR(15, 15)
+        effectiveness_chart[PokeType.FIRE.value][PokeType.GRASS.value] = 2.0
+        effectiveness_chart[PokeType.GRASS.value][PokeType.FIRE.value] = 0.5
+        effectiveness_chart[PokeType.WATER.value][PokeType.FIRE.value] = 2.0
+        effectiveness_chart[PokeType.FIRE.value][PokeType.WATER.value] = 0.5
+        effectiveness_chart[PokeType.GRASS.value][PokeType.WATER.value] = 0.5
+        effectiveness_chart[PokeType.WATER.value][PokeType.GRASS.value] = 2.0
+        effectiveness_chart[PokeType.FIRE.value][PokeType.FIRE.value] = 0.5
+        effectiveness_chart[PokeType.GRASS.value][PokeType.GRASS.value] = 0.5
+        effectiveness_chart[PokeType.WATER.value][PokeType.WATER.value] = 0.5
 
-        return cls.EFFECT_TABLE.iloc[attack_type.value, defend_type.value]
-        # I make use of the iloc function that I learn in FIT1043, it returns to the value with row * col
-        # How ever I realised that the row is the defender and the column is the attacker
+        return effectiveness_chart[attack_type.value][defend_type.value]
+
+        pass
+
 
     def __len__(self) -> int:
         """
@@ -171,7 +182,8 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
         Returns:
             int: The damage that this Pokemon inflicts on the other Pokemon during an attack.
         """
-        raise NotImplementedError
+        pass
+        
 
     def defend(self, damage: int) -> None:
         """
@@ -199,7 +211,15 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
         Evolves the Pokemon to the next stage in its evolution line, and updates
           its attributes accordingly.
         """
-        raise NotImplementedError
+        self.name = self.evolution_line[self.evolution_line.index(self.name)+1]
+        # remark: this is using the stack to evolve the pokemon
+        self.health *= 1.5
+        self.battle_power *= 1.5
+        self.defence *= 1.5
+        self.speed *= 1.5
+
+        
+        
 
     def is_alive(self) -> bool:
         """
@@ -220,3 +240,5 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
     
 # ty = TypeEffectiveness()
 # print(ty.get_effectiveness(PokeType.WATER, PokeType.GRASS))
+    
+
