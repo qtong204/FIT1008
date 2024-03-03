@@ -36,6 +36,18 @@ class TypeEffectiveness:
     """
     Represents the type effectiveness of one Pokemon type against another.
     """
+    effectiveness_table = []
+
+    def load_effectiveness_table(self, csv_file: str) -> list:
+        """
+        Loads the type effectiveness values from the given CSV file and returns them as a list.
+        """
+        with open(csv_file, 'r') as file:
+            next(file)  # Skip the header row
+            for line in file:
+                values = line.strip().split(',')
+                self.effectiveness_table.append([float(val) for val in values])
+        return self.effectiveness_table
 
     @classmethod
     def get_effectiveness(cls, attack_type: PokeType, defend_type: PokeType) -> float:
@@ -49,27 +61,15 @@ class TypeEffectiveness:
         Returns:
             float: The effectiveness of the attack, as a float value between 0 and 4.
         """
-        effectiveness_chart = ArrayR(15, 15)
-        effectiveness_chart[PokeType.FIRE.value][PokeType.GRASS.value] = 2.0
-        effectiveness_chart[PokeType.GRASS.value][PokeType.FIRE.value] = 0.5
-        effectiveness_chart[PokeType.WATER.value][PokeType.FIRE.value] = 2.0
-        effectiveness_chart[PokeType.FIRE.value][PokeType.WATER.value] = 0.5
-        effectiveness_chart[PokeType.GRASS.value][PokeType.WATER.value] = 0.5
-        effectiveness_chart[PokeType.WATER.value][PokeType.GRASS.value] = 2.0
-        effectiveness_chart[PokeType.FIRE.value][PokeType.FIRE.value] = 0.5
-        effectiveness_chart[PokeType.GRASS.value][PokeType.GRASS.value] = 0.5
-        effectiveness_chart[PokeType.WATER.value][PokeType.WATER.value] = 0.5
-
-        return effectiveness_chart[attack_type.value][defend_type.value]
-
-        pass
+        effectiveness = cls.effectiveness_table[attack_type.value][defend_type.value]
+        return effectiveness
 
 
     def __len__(self) -> int:
         """
-        Returns the number of types of Pokemon
+        Returns the number of types of Pokemon.
         """
-        raise NotImplementedError
+        return len(PokeType)
 
 
 class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-attributes
@@ -182,7 +182,20 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
         Returns:
             int: The damage that this Pokemon inflicts on the other Pokemon during an attack.
         """
-        pass
+        attack_type = self.get_poketype()
+        defend_type = other_pokemon.get_poketype()
+        effectiveness = TypeEffectiveness.get_effectiveness(attack_type, defend_type)
+        if other_pokemon.battle_power < self.battle_power / 2:
+            damage = self.battle_power - other_pokemon.battle_power
+        elif other_pokemon.battle_power < self.battle_power:
+            damage = int(-(self.battle_power * 5/8 - other_pokemon.battle_power / 4) // 1)
+        else:
+            damage = int(-(self.battle_power / 4)//1)
+
+        effective_damage = int(damage * effectiveness)
+        return effective_damage
+
+        
         
 
     def defend(self, damage: int) -> None:
@@ -238,7 +251,19 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
         return f"{self.name} (Level {self.level}) with {self.get_health()} health \
                 and {self.get_experience()} experience"
     
-# ty = TypeEffectiveness()
-# print(ty.get_effectiveness(PokeType.WATER, PokeType.GRASS))
+ty = TypeEffectiveness()
+ty.load_effectiveness_table("type_effectiveness.csv")
+
+# csv_file = "type_effectiveness.csv"
+# effecttable = []
+# with open(csv_file, 'r') as file:
+#     for i in file:
+#         effecttable.append(i.strip().split(","))
+
+# for i in range(1, len(effecttable)):
+#     for j in range(len(effecttable[i])):
+#         effecttable[i][j] = float(effecttable[i][j])
+
+
     
 
