@@ -9,6 +9,7 @@ class PokeTeam:
 
     def __init__(self):
         """to initialise the team. This takes some additional arguments to determine how initialisation occurs."""
+        pass
         self.team = []
 
     def choose_manually(self):
@@ -18,7 +19,8 @@ class PokeTeam:
 
     def choose_randomly(self) -> None:
         """to generate a team of 6 randomly chosen Pokemon"""
-        pass
+        pokemons = random.sample(self.POKE_LIST, self.TEAM_LIMIT)
+        # pass
        
 
     def regenerate_team(self) -> None:
@@ -35,10 +37,16 @@ class PokeTeam:
         return len(self.team)
     
     def assemble_team(self):
+        """to place your pokemon in the appropriate ADT when a battle mode is selected 
+        (you will need to leave this empty right now but you will fill this in later in the next task)"""
         pass
 
     def special(self):
+        """
+        which takes different effects based on the type of battle, which will be covered in the next task
+        """
         pass
+
 
     def __str__(self):
         """ should print out the current members of the team with each member printed in a new line"""
@@ -59,7 +67,14 @@ class Trainer:
         """which should pick a team based on the mode that is supplied to the method as an argument. 
         Pick team can only have the values 'Random' or 'Manual'.
         You should return an error if one of these options is not chosen"""
-        raise NotImplementedError
+
+        if method == 'Random':
+            self.PokeTeam = PokeTeam.choose_randomly()
+        elif method == 'Manual':
+            self.PokeTeam = PokeTeam.choose_manually()
+        else:
+            raise ValueError('Invalid method')
+
 
     def get_team(self) -> PokeTeam:
         """which should return the current PokeTeam"""
@@ -81,7 +96,7 @@ class Trainer:
     def __str__(self) -> str:
         """should return a string of the following format: Trainer <trainer_name> Pokedex Completion: <completion>%
 You need to convert your pokedex completion to a percentage here by multiplying it by 100"""
-        raise NotImplementedError
+        return f'Trainer {self.name} Pokedex Completion: {self.get_pokedex_completion()}%'
 
 if __name__ == '__main__':
     # t = Trainer('Ash')
@@ -90,4 +105,14 @@ if __name__ == '__main__':
     # print(t)
     # print(t.get_team())
     pkt = PokeTeam()
-    print(pkt.choose_randomly())
+    pkt.POKE_LIST
+    # print(type(pkt.POKE_LIST[0]))
+    # print(pkt.POKE_LIST[0])
+    # # print(pkt.team)
+    # Charmanderr = Charmander()
+    # print(Charmanderr) 
+    # print(pkt.choose_randomly())
+    # pokemonn = Pokemon()
+    # pokemonn.get_name()
+
+    
