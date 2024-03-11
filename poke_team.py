@@ -10,23 +10,35 @@ class PokeTeam:
     def __init__(self):
         """to initialise the team. This takes some additional arguments to determine how initialisation occurs."""
         pass
-        self.team = []
+        self.team = None
 
     def choose_manually(self):
         """to let the user choose upto 6 Pokemon. Please note that the user 
         should have an option to choose less than 6 Pokemon if they choose to do so"""
-        pass
+
+        self.team = ArrayR(int(input('Enter the number of pokemon you want in your team ( maximum is 6 ): ')))
+        for i in range(len(self.team)):
+            choose_pokemon = int(input('Enter the no of the pokemon you want to add to your team: '))    
+            self.team[i] = self.POKE_LIST[choose_pokemon]()
+
+        return self.team
+        
 
     def choose_randomly(self) -> None:
         """to generate a team of 6 randomly chosen Pokemon"""
-        pokemons = random.sample(self.POKE_LIST, self.TEAM_LIMIT)
-        # pass
+        self.team = ArrayR(6)
+        for i in range(self.TEAM_LIMIT):
+            random_pokemon = random.choice(self.POKE_LIST)()
+            self.team[i] = random_pokemon
+        return self.team
+        
        
 
     def regenerate_team(self) -> None:
         """to heal all of the pokemon to their original HP while preserving their level and evolution. 
         This should also assemble the team according to the battle mode (discussed later)"""
-        raise NotImplementedError
+        team_regenerated = self.team
+        return team_regenerated
 
     def __getitem__(self, index: int):
         """to retrieve a Pokemon at a specific index of the team"""
@@ -50,8 +62,10 @@ class PokeTeam:
 
     def __str__(self):
         """ should print out the current members of the team with each member printed in a new line"""
-        for i in range(len(self.team)):
-            print(self.team[i])
+        team_members = "\n".join(str(pokemon) for pokemon in self.team)
+        return team_members
+
+
 
 class Trainer:
 
@@ -99,20 +113,8 @@ You need to convert your pokedex completion to a percentage here by multiplying 
         return f'Trainer {self.name} Pokedex Completion: {self.get_pokedex_completion()}%'
 
 if __name__ == '__main__':
-    # t = Trainer('Ash')
-    # print(t)
-    # t.pick_team("Random")
-    # print(t)
-    # print(t.get_team())
-    pkt = PokeTeam()
-    pkt.POKE_LIST
-    # print(type(pkt.POKE_LIST[0]))
-    # print(pkt.POKE_LIST[0])
-    # # print(pkt.team)
-    # Charmanderr = Charmander()
-    # print(Charmanderr) 
-    # print(pkt.choose_randomly())
-    # pokemonn = Pokemon()
-    # pokemonn.get_name()
-
-    
+    t = Trainer('Ash')
+    print(t)
+    t.pick_team("Random")
+    print(t)
+    print(t.get_team())

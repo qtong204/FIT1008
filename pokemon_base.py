@@ -248,21 +248,11 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
         Return a string representation of the Pokemon instance in the format:
         <name> (Level <level>) with <health> health and <experience> experience
         """
-        return f"{self.name} (Level {self.level}) with {self.get_health()} health \
-                and {self.get_experience()} experience"
+        return f"{self.name} (Level {self.level}) with {self.get_health()} health and {self.get_experience()} experience"
     
 ty = TypeEffectiveness()
 ty.load_effectiveness_table("type_effectiveness.csv")
 
-# csv_file = "type_effectiveness.csv"
-# effecttable = []
-# with open(csv_file, 'r') as file:
-#     for i in file:
-#         effecttable.append(i.strip().split(","))
-
-# for i in range(1, len(effecttable)):
-#     for j in range(len(effecttable[i])):
-#         effecttable[i][j] = float(effecttable[i][j])
 
 
     
