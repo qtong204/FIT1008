@@ -118,3 +118,4 @@ if __name__ == '__main__':
     t.pick_team("Random")
     print(t)
     print(t.get_team())
+ 
