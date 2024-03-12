@@ -6,12 +6,6 @@ from enum import Enum
 from data_structures.referential_array import ArrayR
 
 
-
-class BattleMode(Enum):
-    SET = 0
-    ROTATE = 1
-    OPTIMISE = 2
-
 class PokeType(Enum):
     """
     This class contains all the different types that a Pokemon could belong to
@@ -195,7 +189,6 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
         effective_damage = int(damage * effectiveness)
         return effective_damage
 
-        
         
 
     def defend(self, damage: int) -> None:

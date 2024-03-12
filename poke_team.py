@@ -1,7 +1,7 @@
 from pokemon import *
 import random
 from typing import List
-
+from data_structures.array_sorted_list import ArraySortedList
 class PokeTeam:
     random.seed(20)
     TEAM_LIMIT = 6
@@ -26,11 +26,12 @@ class PokeTeam:
 
     def choose_randomly(self) -> None:
         """to generate a team of 6 randomly chosen Pokemon"""
-        self.team = ArrayR(6)
+        self.team = ArrayR(self.TEAM_LIMIT)
         for i in range(self.TEAM_LIMIT):
-            random_pokemon = random.choice(self.POKE_LIST)()
-            self.team[i] = random_pokemon
-        return self.team
+            random_pokemon = random.choice(self.POKE_LIST)
+            # print(random_pokemon)
+            self.team[i] = random_pokemon()
+        return str(self.team)
         
        
 
@@ -59,7 +60,6 @@ class PokeTeam:
         """
         pass
 
-
     def __str__(self):
         """ should print out the current members of the team with each member printed in a new line"""
         team_members = "\n".join(str(pokemon) for pokemon in self.team)
@@ -73,9 +73,9 @@ class Trainer:
         """which should take the name as an argument and set the Trainer's name, 
         initialise a new PokeTeam and also a Pokedex. """
         self.name = name
-        self.PokeTeam = None
-        self.pokedex = None
-        # raise NotImplementedError
+        self.PokeTeam = PokeTeam()
+        self.pokedex = ArraySortedList(len(PokeType))
+
 
     def pick_team(self, method: str) -> None:
         """which should pick a team based on the mode that is supplied to the method as an argument. 
@@ -83,9 +83,9 @@ class Trainer:
         You should return an error if one of these options is not chosen"""
 
         if method == 'Random':
-            self.PokeTeam = PokeTeam.choose_randomly()
+            return self.PokeTeam.choose_randomly()
         elif method == 'Manual':
-            self.PokeTeam = PokeTeam.choose_manually()
+            return self.PokeTeam.choose_manually()
         else:
             raise ValueError('Invalid method')
 
@@ -99,13 +99,17 @@ class Trainer:
 
     def register_pokemon(self, pokemon: Pokemon) -> None:
         """which should register a pokemon as seen on the trainer's Pokedex"""
-        raise NotImplementedError
-
+        for i in range(len(self.PokeTeam.team())):
+            if self.PokeTeam[i].poketype not in self.pokedex:
+                self.pokedex.add(self.PokeTeam[i].poketype)
+        
     def get_pokedex_completion(self) -> float:
         """which should return a rounded float ratio of the number of different 
         TYPES of pokemon seen vs the total number of TYPES of pokemon available rounded to 2 decimal points. 
-        For this point, two FIRE type pokemon count as the exact same"""
-        raise NotImplementedError
+        For this point, two FIRE type pokemon count as the exact same""" 
+        # the datatype should be used as set which their items are not repeated
+        return len(self.pokedex) / len(PokeType)
+        
 
     def __str__(self) -> str:
         """should return a string of the following format: Trainer <trainer_name> Pokedex Completion: <completion>%
@@ -113,9 +117,15 @@ You need to convert your pokedex completion to a percentage here by multiplying 
         return f'Trainer {self.name} Pokedex Completion: {self.get_pokedex_completion()}%'
 
 if __name__ == '__main__':
-    t = Trainer('Ash')
-    print(t)
-    t.pick_team("Random")
-    print(t)
-    print(t.get_team())
- 
+    # t = Trainer('Ash')
+    # print(t)
+    # t.pick_team("Random")
+    # print(t)
+    # print(t.get_team())
+    pkt = PokeTeam()
+    # print(pkt.POKE_LIST)
+    pkt.choose_randomly()
+    print(pkt)
+    # print(Pokemon.get_name(pkt[0]()))
+    
+    
