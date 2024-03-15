@@ -99,9 +99,11 @@ class Trainer:
 
     def register_pokemon(self, pokemon: Pokemon) -> None:
         """which should register a pokemon as seen on the trainer's Pokedex"""
-        for i in range(len(self.PokeTeam.team())):
-            if self.PokeTeam[i].poketype not in self.pokedex:
-                self.pokedex.add(self.PokeTeam[i].poketype)
+        if pokemon.get_poketype() not in self.pokedex:
+            self.pokedex.append(pokemon.get_poketype())
+        # pass
+
+        
         
     def get_pokedex_completion(self) -> float:
         """which should return a rounded float ratio of the number of different 
@@ -117,15 +119,23 @@ You need to convert your pokedex completion to a percentage here by multiplying 
         return f'Trainer {self.name} Pokedex Completion: {self.get_pokedex_completion()}%'
 
 if __name__ == '__main__':
-    # t = Trainer('Ash')
-    # print(t)
-    # t.pick_team("Random")
-    # print(t)
+    t = Trainer('Ash')
+    print(t)
+    t.pick_team("Random")
+
     # print(t.get_team())
-    pkt = PokeTeam()
-    # print(pkt.POKE_LIST)
-    pkt.choose_randomly()
-    print(pkt)
-    # print(Pokemon.get_name(pkt[0]()))
-    
+    # print(t.PokeTeam)
+    # for i in range(len(t.PokeTeam)):
+    #     t.register_pokemon(t.PokeTeam[i])
+    #     # print(t.PokeTeam[i])
+    # print(t.pokedex)
+    # print(Pikachu())
+    t.register_pokemon(Pikachu())
+    # print(t.pokedex)
+    print(len(t.pokedex))
+    t.register_pokemon(Pidgey())
+
+
+
+
     
