@@ -2,6 +2,8 @@ from pokemon import *
 import random
 from typing import List
 from data_structures.array_sorted_list import ArraySortedList
+from data_structures.stack_adt import ArrayStack
+from battle_mode import BattleMode
 class PokeTeam:
     random.seed(20)
     TEAM_LIMIT = 6
@@ -31,15 +33,16 @@ class PokeTeam:
             random_pokemon = random.choice(self.POKE_LIST)
             # print(random_pokemon)
             self.team[i] = random_pokemon()
-        return str(self.team)
+        
         
        
 
-    def regenerate_team(self) -> None:
+    def regenerate_team(battle_mode, criterion=None):
         """to heal all of the pokemon to their original HP while preserving their level and evolution. 
         This should also assemble the team according to the battle mode (discussed later)"""
         team_regenerated = self.team
-        return team_regenerated
+        return team_regenerated # here should be return as none 
+
 
     def __getitem__(self, index: int):
         """to retrieve a Pokemon at a specific index of the team"""
@@ -49,17 +52,24 @@ class PokeTeam:
         """should return the current length of the team"""
         return len(self.team)
     
-    def assemble_team(self):
+    def assemble_team(self, battle_mode: str):
         """to place your pokemon in the appropriate ADT when a battle mode is selected 
         (you will need to leave this empty right now but you will fill this in later in the next task)"""
         pass
 
-    def special(self):
+    def special(self, battle_mode:BattleMode):
         """
         which takes different effects based on the type of battle, which will be covered in the next task
         """
-        pass
+        tmp_team = self.team
+        if battle_mode.name == 'SET':
+            tmp_team = ArrayStack(len(self.team))
+            for i in range(len(self.team)- 1, -1, -1):
+                tmp_team.push(self.team[i]) # so now here should be the stack
 
+
+            
+        
     def __str__(self):
         """ should print out the current members of the team with each member printed in a new line"""
         team_members = "\n".join(str(pokemon) for pokemon in self.team)
@@ -74,17 +84,17 @@ class Trainer:
         initialise a new PokeTeam and also a Pokedex. """
         self.name = name
         self.PokeTeam = PokeTeam()
-        self.pokedex = ArraySortedList(len(PokeType))
+        self.pokedex = ArrayR(len(PokeType))
 
 
     def pick_team(self, method: str) -> None:
         """which should pick a team based on the mode that is supplied to the method as an argument. 
         Pick team can only have the values 'Random' or 'Manual'.
         You should return an error if one of these options is not chosen"""
-
-        if method == 'Random':
+        method = method.upper()
+        if method == 'RANDOM':
             return self.PokeTeam.choose_randomly()
-        elif method == 'Manual':
+        elif method == 'MANUAL':
             return self.PokeTeam.choose_manually()
         else:
             raise ValueError('Invalid method')
@@ -100,40 +110,42 @@ class Trainer:
     def register_pokemon(self, pokemon: Pokemon) -> None:
         """which should register a pokemon as seen on the trainer's Pokedex"""
         if pokemon.get_poketype() not in self.pokedex:
-            self.pokedex.append(pokemon.get_poketype())
-        # pass
-
-        
+            index = self.pokedex.index(None)
+            self.pokedex[index] = pokemon.get_poketype()
+        # raise ValueError('Pokedex is full')
         
     def get_pokedex_completion(self) -> float:
         """which should return a rounded float ratio of the number of different 
         TYPES of pokemon seen vs the total number of TYPES of pokemon available rounded to 2 decimal points. 
         For this point, two FIRE type pokemon count as the exact same""" 
         # the datatype should be used as set which their items are not repeated
-        return len(self.pokedex) / len(PokeType)
+        length_of_pokedex = 0
+        for i in range(len(self.pokedex)):
+            if self.pokedex[i] != None:
+                length_of_pokedex += 1
+
+                
+        return length_of_pokedex / len(PokeType)
         
 
     def __str__(self) -> str:
         """should return a string of the following format: Trainer <trainer_name> Pokedex Completion: <completion>%
 You need to convert your pokedex completion to a percentage here by multiplying it by 100"""
-        return f'Trainer {self.name} Pokedex Completion: {self.get_pokedex_completion()}%'
+        return f'Trainer {self.name} Pokedex Completion: {int(self.get_pokedex_completion() * 100)}%'
 
 if __name__ == '__main__':
     t = Trainer('Ash')
     print(t)
     t.pick_team("Random")
+    print(t)
+    print(len(t.PokeTeam))
+    print(t.get_team())
+    print('\n')
 
-    # print(t.get_team())
-    # print(t.PokeTeam)
-    # for i in range(len(t.PokeTeam)):
-    #     t.register_pokemon(t.PokeTeam[i])
-    #     # print(t.PokeTeam[i])
-    # print(t.pokedex)
-    # print(Pikachu())
-    t.register_pokemon(Pikachu())
-    # print(t.pokedex)
-    print(len(t.pokedex))
-    t.register_pokemon(Pidgey())
+    print(t.get_team().special(BattleMode.SET))
+    
+
+    
 
 
 

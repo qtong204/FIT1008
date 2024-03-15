@@ -165,7 +165,7 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
         """
         return self.battle_power
 
-    def attack(self, other_pokemon) -> int:
+    def attack(self, other_pokemon) -> int: # this should be check again
         """
         Calculates and returns the damage that this Pokemon inflicts on the
         other Pokemon during an attack.
