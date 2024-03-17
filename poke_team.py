@@ -1,9 +1,11 @@
 from pokemon import *
 import random
 from typing import List
-from data_structures.array_sorted_list import ArraySortedList
 from data_structures.stack_adt import ArrayStack
 from battle_mode import BattleMode
+from data_structures.array_sorted_list import ArraySortedList
+from data_structures.queue_adt import CircularQueue
+
 class PokeTeam:
     random.seed(20)
     TEAM_LIMIT = 6
@@ -11,7 +13,7 @@ class PokeTeam:
 
     def __init__(self):
         """to initialise the team. This takes some additional arguments to determine how initialisation occurs."""
-        pass
+        
         self.team = None
 
     def choose_manually(self):
@@ -28,19 +30,21 @@ class PokeTeam:
 
     def choose_randomly(self) -> None:
         """to generate a team of 6 randomly chosen Pokemon"""
-        self.team = ArrayR(self.TEAM_LIMIT)
-        for i in range(self.TEAM_LIMIT):
-            random_pokemon = random.choice(self.POKE_LIST)
+        #O(n + n(c + r))
+        self.team = ArrayR(self.TEAM_LIMIT) #(n) where n is the self.TEAM_LIMIT
+        for i in range(self.TEAM_LIMIT):#O(n)
+            random_pokemon = random.choice(self.POKE_LIST) # O(c)
             # print(random_pokemon)
-            self.team[i] = random_pokemon()
+            self.team[i] = random_pokemon() # O(r)
         
         
        
 
     def regenerate_team(battle_mode, criterion=None):
-        """to heal all of the pokemon to their original HP while preserving their level and evolution. 
-        This should also assemble the team according to the battle mode (discussed later)"""
-        team_regenerated = self.team
+        """to heal all of the pokemon to their original HP while preserving their level and evolution.
+          This should also assemble the team according to the battle mode (discussed later)"""
+        
+        
         return team_regenerated # here should be return as none 
 
 
@@ -52,20 +56,69 @@ class PokeTeam:
         """should return the current length of the team"""
         return len(self.team)
     
-    def assemble_team(self, battle_mode: str):
+    def assemble_team(self, battle_mode: BattleMode):
         """to place your pokemon in the appropriate ADT when a battle mode is selected 
         (you will need to leave this empty right now but you will fill this in later in the next task)"""
-        pass
+        if battle_mode.name == 'SET':
+            temp_stack = ArrayStack(len(self.team))
+            for i in range(len(self.team)):
+                temp_stack.push(self.team[i])
+            
+            return temp_stack
+        elif battle_mode.name == 'ROTATE':
+            temp_queue = CircularQueue(len(self.team))
+            for i in range(len(self.team)):
+                temp_queue.append(self.team[i])
+            return temp_queue
+        else:
+            self.team = ArraySortedList(len(self.team))  # this need to be implemented not sure yet
+            return self.team
+    
 
     def special(self, battle_mode:BattleMode):
         """
         which takes different effects based on the type of battle, which will be covered in the next task
         """
-        tmp_team = self.team
+        
         if battle_mode.name == 'SET':
-            tmp_team = ArrayStack(len(self.team))
-            for i in range(len(self.team)- 1, -1, -1):
-                tmp_team.push(self.team[i]) # so now here should be the stack
+            team_stack = self.assemble_team(battle_mode)
+            length = len(team_stack)
+
+            temp_queue = CircularQueue(len(self.team))
+            temp_stack = ArrayStack(len(self.team))
+
+
+            for _ in range(length//2):
+                temp_stack.push(team_stack.pop())
+            for _ in range(length//2):
+                temp_queue.append(team_stack.pop())
+            for _ in range(length//2):
+                team_stack.push(temp_queue.serve())
+            for _ in range(length//2):
+                team_stack.push(temp_stack.pop())
+            return team_stack
+            
+        
+        elif battle_mode.name == 'ROTATE':
+            team_queue = self.assemble_team(battle_mode)
+            length = len(team_queue)
+            temp_stack = ArrayStack(len(self.team))
+            temp_queue = CircularQueue(len(self.team))
+
+            for _ in range(length//2):
+                temp_queue.append(team_queue.serve()) # serve the first half to the temp_queue
+            for _ in range(length//2):
+                temp_stack.push(team_queue.serve()) # serve the second half to the temp_stack
+            
+            for _ in range(length//2):
+                temp_queue.append(temp_stack.pop())
+            
+            return temp_queue
+            
+
+            
+
+        
 
 
             
@@ -142,7 +195,16 @@ if __name__ == '__main__':
     print(t.get_team())
     print('\n')
 
-    print(t.get_team().special(BattleMode.SET))
+
+    # print(t.PokeTeam[1].get_evolution())
+    # print(poketeam.team.array[0].get_health())
+    print(t.get_team().special(BattleMode.ROTATE))
+
+
+
+
+
+    
     
 
     
