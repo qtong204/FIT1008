@@ -98,6 +98,8 @@ class CircularQueue(Queue[T]):
         Queue.__init__(self)
         self.front = 0
         self.rear = 0
+    def __str__(self):
+        return str(self.array)
 
 
 class TestQueue(unittest.TestCase):

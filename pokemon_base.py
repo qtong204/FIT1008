@@ -210,7 +210,7 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
         self.level += 1
         if len(self.evolution_line) > 0 and self.evolution_line.index\
             (self.name) != len(self.evolution_line)-1:
-            self._evolve()
+            self.()
 
     def _evolve(self) -> None:
         """

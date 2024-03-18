@@ -98,6 +98,10 @@ class ArrayStack(Stack[T]):
         if self.is_empty():
             raise Exception("Stack is empty")
         return self.array[self.length-1]
+    
+    def __str__(self):
+        """ Returns the elements of the stack as a string."""
+        return str(self.array)
 
 class TestStack(unittest.TestCase):
     """ Tests for the above class."""

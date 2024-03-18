@@ -36,16 +36,27 @@ class PokeTeam:
             random_pokemon = random.choice(self.POKE_LIST) # O(c)
             # print(random_pokemon)
             self.team[i] = random_pokemon() # O(r)
+    
+    # def heal(self):
+    #     """to heal all of the pokemon to their original HP while preserving their level and evolution"""
+    #     for i in range(len(self.team)):
+    #         print(self.team[i].get_heal())
+        
         
         
        
 
-    def regenerate_team(battle_mode, criterion=None):
+    def regenerate_team(self, battle_mode):
         """to heal all of the pokemon to their original HP while preserving their level and evolution.
           This should also assemble the team according to the battle mode (discussed later)"""
+        for i in range(len(self.team)):
+            self.team[i].health = self.team[i].get_health()
         
+        return self.special(battle_mode)
+
+            
         
-        return team_regenerated # here should be return as none 
+         
 
 
     def __getitem__(self, index: int):
@@ -81,7 +92,7 @@ class PokeTeam:
         """
         
         if battle_mode.name == 'SET':
-            team_stack = self.assemble_team(battle_mode)
+            team_stack = self.assemble_team(battle_mode) # self.team 
             length = len(team_stack)
 
             temp_queue = CircularQueue(len(self.team))
@@ -109,7 +120,6 @@ class PokeTeam:
                 temp_queue.append(team_queue.serve()) # serve the first half to the temp_queue
             for _ in range(length//2):
                 temp_stack.push(team_queue.serve()) # serve the second half to the temp_stack
-            
             for _ in range(length//2):
                 temp_queue.append(temp_stack.pop())
             
@@ -194,11 +204,15 @@ if __name__ == '__main__':
     print(len(t.PokeTeam))
     print(t.get_team())
     print('\n')
+    print(t.PokeTeam.regenerate_team(BattleMode.SET))
+
+
 
 
     # print(t.PokeTeam[1].get_evolution())
-    # print(poketeam.team.array[0].get_health())
-    print(t.get_team().special(BattleMode.ROTATE))
+    print(t.PokeTeam[0].health)
+    # print(t.get_team().special(BattleMode.ROTATE))
+
 
 
 
