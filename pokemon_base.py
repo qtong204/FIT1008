@@ -176,20 +176,21 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
         Returns:
             int: The damage that this Pokemon inflicts on the other Pokemon during an attack.
         """
-        attack_type = self.get_poketype()
-        defend_type = other_pokemon.get_poketype()
-        effectiveness = TypeEffectiveness.get_effectiveness(attack_type, defend_type)
-        if other_pokemon.battle_power < self.battle_power / 2:
-            damage = self.battle_power - other_pokemon.battle_power
-        elif other_pokemon.battle_power < self.battle_power:
-            damage = int(-(self.battle_power * 5/8 - other_pokemon.battle_power / 4) // 1)
+        damage = 0
+        attack = self.get_battle_power()
+        defense = other_pokemon.get_defence()
+
+        if defense < attack / 2:
+            damage = attack - defense
+        elif defense < attack:
+            damage = int(attack * 5/8 - defense / 4)
         else:
-            damage = int(-(self.battle_power / 4)//1)
+            damage = int(attack / 4)
 
-        effective_damage = int(damage * effectiveness)
+        effective_damage = damage * TypeEffectiveness.get_effectiveness(self.get_poketype(), other_pokemon.get_poketype())
+        effective_damage = effective_damage * (attacking_pokedex_completion / defending_pokedex_completion)
+
         return effective_damage
-
-        
 
     def defend(self, damage: int) -> None:
         """
@@ -210,7 +211,7 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
         self.level += 1
         if len(self.evolution_line) > 0 and self.evolution_line.index\
             (self.name) != len(self.evolution_line)-1:
-            self.()
+            self._evolve()
 
     def _evolve(self) -> None:
         """
@@ -218,7 +219,7 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
           its attributes accordingly.
         """
         self.name = self.evolution_line[self.evolution_line.index(self.name)+1]
-        # remark: this is using the stack to evolve the pokemon
+
         self.health *= 1.5
         self.battle_power *= 1.5
         self.defence *= 1.5

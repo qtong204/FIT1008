@@ -15,6 +15,9 @@ class PokeTeam:
         """to initialise the team. This takes some additional arguments to determine how initialisation occurs."""
         
         self.team = None
+        self.stack = None 
+        self.queue = None
+        self.optimise = None
 
     def choose_manually(self):
         """to let the user choose upto 6 Pokemon. Please note that the user 
@@ -49,14 +52,22 @@ class PokeTeam:
     def regenerate_team(self, battle_mode):
         """to heal all of the pokemon to their original HP while preserving their level and evolution.
           This should also assemble the team according to the battle mode (discussed later)"""
-        for i in range(len(self.team)):
-            self.team[i].health = self.team[i].get_health()
-        
-        return self.special(battle_mode)
+        # for my ideas is like use the original team from the self.team and the evolution i will be update here not rremaiin the original
+        if battle_mode.name == 'SET':
+            temp_stack = ArrayStack(len(self.team))
+            for i in range(len(self.stack)):
+                pokemon = self.stack.pop()
+                pokemon.health = self.team[i].get_heal()
+                temp_stack.push(pokemon)
+            
+        elif battle_mode.name == 'ROTATE':
+            for i in range(len(self.queue)):
+                pokemon = self.queue.serve()
+                pokemon.health = self.team[i].get_heal()
+                self.queue.append(pokemon)
 
             
         
-         
 
 
     def __getitem__(self, index: int):
@@ -74,16 +85,17 @@ class PokeTeam:
             temp_stack = ArrayStack(len(self.team))
             for i in range(len(self.team)):
                 temp_stack.push(self.team[i])
-            
-            return temp_stack
+            self.stack = temp_stack
+
         elif battle_mode.name == 'ROTATE':
             temp_queue = CircularQueue(len(self.team))
             for i in range(len(self.team)):
                 temp_queue.append(self.team[i])
-            return temp_queue
+            self.queue = temp_queue
+            
         else:
             self.team = ArraySortedList(len(self.team))  # this need to be implemented not sure yet
-            return self.team
+            
     
 
     def special(self, battle_mode:BattleMode):
@@ -92,46 +104,39 @@ class PokeTeam:
         """
         
         if battle_mode.name == 'SET':
-            team_stack = self.assemble_team(battle_mode) # self.team 
-            length = len(team_stack)
+            length = len(self.stack)
 
-            temp_queue = CircularQueue(len(self.team))
-            temp_stack = ArrayStack(len(self.team))
+            temp_queue = CircularQueue(len(self.stack))
+            temp_stack = ArrayStack(len(self.stack))
 
 
             for _ in range(length//2):
-                temp_stack.push(team_stack.pop())
+                temp_stack.push(self.stack.pop())
             for _ in range(length//2):
-                temp_queue.append(team_stack.pop())
+                temp_queue.append(self.stack.pop())
             for _ in range(length//2):
-                team_stack.push(temp_queue.serve())
+                self.stack.push(temp_queue.serve())
             for _ in range(length//2):
-                team_stack.push(temp_stack.pop())
-            return team_stack
+                self.stack.push(temp_stack.pop())
+            return self.stack
             
         
         elif battle_mode.name == 'ROTATE':
-            team_queue = self.assemble_team(battle_mode)
-            length = len(team_queue)
+            
+            length = len(self.queue)
             temp_stack = ArrayStack(len(self.team))
             temp_queue = CircularQueue(len(self.team))
 
             for _ in range(length//2):
-                temp_queue.append(team_queue.serve()) # serve the first half to the temp_queue
+                temp_queue.append(self.queue.serve()) # serve the first half to the temp_queue
             for _ in range(length//2):
-                temp_stack.push(team_queue.serve()) # serve the second half to the temp_stack
+                temp_stack.push(self.queue.serve()) # serve the second half to the temp_stack
             for _ in range(length//2):
                 temp_queue.append(temp_stack.pop())
             
-            return temp_queue
+            return self.queue
             
 
-            
-
-        
-
-
-            
         
     def __str__(self):
         """ should print out the current members of the team with each member printed in a new line"""
@@ -204,13 +209,16 @@ if __name__ == '__main__':
     print(len(t.PokeTeam))
     print(t.get_team())
     print('\n')
-    print(t.PokeTeam.regenerate_team(BattleMode.SET))
+    print(t.PokeTeam.assemble_team(BattleMode.SET))
+    
+    
+
 
 
 
 
     # print(t.PokeTeam[1].get_evolution())
-    print(t.PokeTeam[0].health)
+    # print(type(t.get_team().assemble_team(BattleMode.SET)))
     # print(t.get_team().special(BattleMode.ROTATE))
 
 
