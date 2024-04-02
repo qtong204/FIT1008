@@ -4,6 +4,7 @@ This module contains PokeType, TypeEffectiveness and an abstract version of the 
 from abc import ABC
 from enum import Enum
 from data_structures.referential_array import ArrayR
+import math
 
 
 class PokeType(Enum):
@@ -176,6 +177,7 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
         Returns:
             int: The damage that this Pokemon inflicts on the other Pokemon during an attack.
         """
+        # ceilVal = (a+b-1) / b 
         damage = 0
         attack = self.get_battle_power()
         defense = other_pokemon.get_defence()
@@ -183,12 +185,12 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
         if defense < attack / 2:
             damage = attack - defense
         elif defense < attack:
-            damage = int(attack * 5/8 - defense / 4)
+            damage = math.ceil(attack * 5/8 - defense / 4)
         else:
-            damage = int(attack / 4)
+            damage = math.ceil(attack / 4)
 
-        effective_damage = damage * TypeEffectiveness.get_effectiveness(self.get_poketype(), other_pokemon.get_poketype())
-        effective_damage = effective_damage * (attacking_pokedex_completion / defending_pokedex_completion)
+        effective_damage = math.ceil(damage * TypeEffectiveness.get_effectiveness(self.get_poketype(), other_pokemon.get_poketype()))
+        # effective_damage = effective_damage * (attacking_pokedex_completion / defending_pokedex_completion)
 
         return effective_damage
 
@@ -246,6 +248,7 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
     
 ty = TypeEffectiveness()
 ty.load_effectiveness_table("type_effectiveness.csv")
+# print(ty.get_effectiveness(PokeType.WATER, PokeType.GRASS))
 
 
 

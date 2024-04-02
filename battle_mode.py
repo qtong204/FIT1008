@@ -5,5 +5,3 @@ class BattleMode(Enum):
     ROTATE = 1
     OPTIMISE = 2
 
-print(BattleMode.SET)
-print(BattleMode.SET.name)
