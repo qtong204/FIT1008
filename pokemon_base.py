@@ -177,7 +177,7 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
         Returns:
             int: The damage that this Pokemon inflicts on the other Pokemon during an attack.
         """
-        # ceilVal = (a+b-1) / b 
+        
         damage = 0
         attack = self.get_battle_power()
         defense = other_pokemon.get_defence()
@@ -190,9 +190,10 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
             damage = math.ceil(attack / 4)
 
         effective_damage = math.ceil(damage * TypeEffectiveness.get_effectiveness(self.get_poketype(), other_pokemon.get_poketype()))
-        # effective_damage = effective_damage * (attacking_pokedex_completion / defending_pokedex_completion)
+        
 
         return effective_damage
+
 
     def defend(self, damage: int) -> None:
         """
@@ -238,7 +239,10 @@ class Pokemon(ABC): # pylint: disable=too-few-public-methods, too-many-instance-
             bool: True if the Pokemon is still alive, False otherwise.
         """
         return self.get_health() > 0
+    
+    
 
+    
     def __str__(self):
         """
         Return a string representation of the Pokemon instance in the format:
@@ -253,4 +257,3 @@ ty.load_effectiveness_table("type_effectiveness.csv")
 
 
     
-
